@@ -2,28 +2,29 @@ import { useEffect, useState } from 'react'
 import authenticationServices from '../../../services/authentication.service'
 
 const useAuthentication = () => {
-  const [tokenApp, setTokenApp] = useState(() => window.localStorage.getItem('token'))
+  const [tokenApp, setTokenApp] = useState(() => window.localStorage.getItem('access_token'))
   const [isAuthenticated, setIsAuthenticated] = useState(tokenApp !== null)
 
   useEffect(() => {
-    if (tokenApp === null) {
-      authenticationServices
-        .authenticateSpootify()
-        .then((token) => {
-          if (token) {
-            setIsAuthenticated(true)
-            setTokenApp(token)
-          }
-        })
-        .catch(() => {
-          setTokenApp(null)
-          setIsAuthenticated(false)
-        })
-    }
-  }, [tokenApp])
+    authenticationServices
+      .authenticateSpootify()
+      .then(({ access_token }) => {
+        console.log(access_token)
+        setIsAuthenticated(true)
+        if (access_token) {
+          setTokenApp(access_token)
+        }
+      })
+      .catch(() => {
+        setTokenApp(null)
+        setIsAuthenticated(false)
+      })
+  }, [])
 
   useEffect(() => {
-    window.localStorage.setItem('token', tokenApp)
+    if (tokenApp) {
+      window.localStorage.setItem('access_token', tokenApp)
+    }
   }, [tokenApp])
 
   return {

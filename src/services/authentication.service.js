@@ -13,9 +13,10 @@ const authenticationServices = {
       headers,
       body: 'grant_type=client_credentials'
     })
-    const bodyResponse = await response.json()
 
-    return bodyResponse.access_token
+    const { access_token, refresh_token } = await response.json()
+
+    return { access_token, refresh_token }
   }
 }
 

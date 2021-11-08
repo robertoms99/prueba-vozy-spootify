@@ -19,6 +19,7 @@ const gettingData = {
 
     return bodyResponse.albums?.items ?? []
   },
+
   async getPlaylists(token) {
     const { baseUrl } = config.api
     const url = `${baseUrl}/browse/featured-playlists`

@@ -1,44 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import Header from '../components/Header'
-import config from '../../config'
 import SideBar from '../components/SideBar'
 import Player from '../components/Player'
-
-const authenticate = async () => {
-  const { authUrl, clientId, clientSecret } = config.api
-  const url = authUrl
-  const headers = {
-    Authorization: `Basic ${window.btoa(`${clientId}:${clientSecret}`)}`,
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: 'grant_type=client_credentials'
-  })
-
-  const bodyResponse = await response.json()
-  return bodyResponse.access_token
-}
+import AuthenticationContext from '../context/AuthenticationContext'
 
 function CoreLayout({ children, history }) {
-  const [tokenApp] = useState(() => window.localStorage.getItem('token'))
-  const [isAuthenticated, setIsAuthenticated] = useState(tokenApp !== null)
-
-  useEffect(() => {
-    if (tokenApp === null) {
-      authenticate().then((token) => {
-        if (token) {
-          setIsAuthenticated(true)
-          window.localStorage.setItem('token', token)
-        }
-      })
-    }
-  }, [tokenApp])
+  const { isAuthenticated } = useContext(AuthenticationContext)
 
   return (
     <div className="main">
-      {isAuthenticated && (
+      {isAuthenticated ? (
         <>
           <SideBar />
           <div className="main__content">
@@ -47,6 +18,8 @@ function CoreLayout({ children, history }) {
           </div>
           <Player />
         </>
+      ) : (
+        <h1>ERROR EN LA AUTENTICACION</h1>
       )}
     </div>
   )
